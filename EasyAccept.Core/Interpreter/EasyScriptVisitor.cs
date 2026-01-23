@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Antlr4.Runtime.Misc;
+using Antlr4.Runtime.Tree;
 using EasyAccept.Core.Grammar;
 using EasyAccept.Core.Interpreter.Arguments;
 using EasyAccept.Core.Interpreter.Commands;
@@ -32,6 +33,32 @@ namespace EasyAccept.Core.Interpreter
     {
       ICommand command = new QuitCommand();
       command.Execute();
+      return null;
+    }
+
+    public override object VisitExpect_([NotNull] EasyScriptParser.Expect_Context context)
+    {
+      // Retrieve the expected output argument
+      ITerminalNode expectedOutputNode = context.WORD() ?? context.STRING();
+      NonNamedArgument expectedOutput = new NonNamedArgument(expectedOutputNode.GetText().Trim('"').Trim('\''));
+
+      // Retrieve the unknown command information
+      EasyScriptParser.UnknownCommandContext unknownCommandContext = context.unknownCommand();
+      string commandName = unknownCommandContext.WORD().GetText();
+      List<IEasyArgument> args = ArgumentListContextToArguments(unknownCommandContext.argumentList());
+      UnknownCommand<F> unknownCommand = new UnknownCommand<F>(Facade, commandName, args);
+      
+      // Run the expect command
+      ICommand command = new ExpectCommand<F>(unknownCommand, expectedOutput);
+      try
+      {
+        command.Execute();
+      }
+      catch (CommandException ex)
+      {
+        OutputDriver.WriteLine(ex.Message);        
+      }
+
       return null;
     }
 

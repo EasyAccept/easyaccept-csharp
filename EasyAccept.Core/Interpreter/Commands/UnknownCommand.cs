@@ -12,6 +12,7 @@ namespace EasyAccept.Core.Interpreter.Commands
     private readonly F Facade;
     private readonly string CommandName;
     private readonly List<IEasyArgument> Arguments;
+    public string Result { get; private set; } = null;
 
     public UnknownCommand(F facade, string commandName, List<IEasyArgument> args)
     {
@@ -44,6 +45,12 @@ namespace EasyAccept.Core.Interpreter.Commands
         throw new CommandException("Method " + CommandName + "(" + string.Join(", ", Arguments.Select(arg => $"\"{arg.ToString()}\"")) + ") not found in facade.");
       }
 
+      // IMPORTANT: Currently only void or string return types are supported
+      if (method.ReturnType != typeof(void) && method.ReturnType != typeof(string))
+      {
+        throw new CommandException("Method " + CommandName + " has unsupported return type " + method.ReturnType.Name + ". Only void and string are supported.");
+      }
+
       // Prepare argument values
       object[] argumentValues = new object[Arguments.Count];
       foreach (ParameterInfo parameter in method.GetParameters())
@@ -61,7 +68,12 @@ namespace EasyAccept.Core.Interpreter.Commands
       // Invoke the method
       try
       {
-        method.Invoke(Facade, argumentValues);
+        object result = method.Invoke(Facade, argumentValues);
+
+        if (method.ReturnType == typeof(string))
+        {
+          Result = (string)result;
+        }
       }
       catch (Exception ex)
       {

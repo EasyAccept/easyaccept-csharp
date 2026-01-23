@@ -1,0 +1,3 @@
+# Test the expect command
+expect "Hello, World!" helloWorld
+expect '42' wrongReturnType
