@@ -77,7 +77,7 @@ namespace EasyAccept.Core.Interpreter.Commands
       }
       catch (Exception ex)
       {
-        throw CommandException.CreateBy(ex);
+        throw CommandException.CreateBy(ex.InnerException ?? ex);
       }
     }
   }

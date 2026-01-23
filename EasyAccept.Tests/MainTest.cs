@@ -43,4 +43,15 @@ public class MainTest
         facade.ExecuteTests();
         Assert.Equal("Expect command failed. Expected: \"42\", Actual: \"This method has a wrong return type for testing.\"\n", facade.GetCompleteResults());
     }
+
+    [Fact]
+    public void Test6()
+    {
+        EasyAcceptFacade<object> facade = new(new FakeFacade(), ["tests/test_6.easy"]);
+        facade.ExecuteTests();
+        Assert.Equal(
+            "ExpectError command failed. Expected: \"Different exception message\", Actual: \"A exception was occurred\"\n" +
+            "ExpectError command failed. Expected: \"No exception\", but no error was thrown.\n",
+            facade.GetCompleteResults());
+    }
 }

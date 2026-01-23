@@ -62,6 +62,32 @@ namespace EasyAccept.Core.Interpreter
       return null;
     }
 
+    public override object VisitExpect_error_([NotNull] EasyScriptParser.Expect_error_Context context)
+    {
+      // Retrieve the expected error argument
+      ITerminalNode expectedErrorNode = context.WORD() ?? context.STRING();
+      NonNamedArgument expectedError = new NonNamedArgument(expectedErrorNode.GetText().Trim('"').Trim('\''));
+
+      // Retrieve the unknown command information
+      EasyScriptParser.UnknownCommandContext unknownCommandContext = context.unknownCommand();
+      string commandName = unknownCommandContext.WORD().GetText();
+      List<IEasyArgument> args = ArgumentListContextToArguments(unknownCommandContext.argumentList());
+      UnknownCommand<F> unknownCommand = new UnknownCommand<F>(Facade, commandName, args);
+
+      // Run the expect error command
+      ICommand command = new ExpectErrorCommand<F>(unknownCommand, expectedError);
+      try
+      {
+        command.Execute();
+      }
+      catch (CommandException ex)
+      {
+        OutputDriver.WriteLine(ex.Message);
+      }
+
+      return null;
+    }
+
     public override object VisitUnknownCommand([NotNull] EasyScriptParser.UnknownCommandContext context)
     {
       string commandName = context.WORD().GetText();

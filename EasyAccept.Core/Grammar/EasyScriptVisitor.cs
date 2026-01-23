@@ -69,6 +69,12 @@ public interface IEasyScriptVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitExpect_([NotNull] EasyScriptParser.Expect_Context context);
 	/// <summary>
+	/// Visit a parse tree produced by <see cref="EasyScriptParser.expect_error_"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitExpect_error_([NotNull] EasyScriptParser.Expect_error_Context context);
+	/// <summary>
 	/// Visit a parse tree produced by <see cref="EasyScriptParser.unknownCommand"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
