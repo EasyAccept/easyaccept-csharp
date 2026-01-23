@@ -1,0 +1,3 @@
+[submodule "easyscript-antlr4"]
+	path = easyscript-antlr4
+	url = https://github.com/EasyAccept/easyscript-antlr4.git

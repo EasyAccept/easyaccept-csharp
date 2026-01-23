@@ -1,0 +1,2 @@
+# Check if the echo instruction exists
+echo "Echo instruction is present."
