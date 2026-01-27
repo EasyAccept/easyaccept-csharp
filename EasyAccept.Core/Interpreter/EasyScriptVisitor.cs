@@ -35,8 +35,8 @@ namespace EasyAccept.Core.Interpreter
 
     public override object VisitEcho_([NotNull] EasyScriptParser.Echo_Context context)
     {
-      NonNamedArgument arg = new NonNamedArgument(context.STRING().GetText().Trim('"').Trim('\''));
-      ICommand command = new EchoCommand(arg, OutputDriver, Variables);
+      NonNamedArgument arg = new NonNamedArgument(Visit(context.data()).ToString());
+      ICommand command = new EchoCommand(arg, OutputDriver);
       command.Execute();
       return null;
     }
@@ -51,8 +51,7 @@ namespace EasyAccept.Core.Interpreter
     public override object VisitExpect_([NotNull] EasyScriptParser.Expect_Context context)
     {
       // Retrieve the expected output argument
-      ITerminalNode expectedOutputNode = context.WORD() ?? context.STRING();
-      NonNamedArgument expectedOutput = new NonNamedArgument(expectedOutputNode.GetText().Trim('"').Trim('\''));
+      NonNamedArgument expectedOutput = new NonNamedArgument(Visit(context.data()).ToString());
 
       // Retrieve the unknown command information
       EasyScriptParser.UnknownCommandContext unknownCommandContext = context.unknownCommand();
@@ -61,7 +60,7 @@ namespace EasyAccept.Core.Interpreter
       UnknownCommand<F> unknownCommand = new UnknownCommand<F>(Facade, commandName, args);
       
       // Run the expect command
-      ICommand command = new ExpectCommand<F>(unknownCommand, expectedOutput, Variables);
+      ICommand command = new ExpectCommand<F>(unknownCommand, expectedOutput);
       try
       {
         command.Execute();
@@ -77,8 +76,7 @@ namespace EasyAccept.Core.Interpreter
     public override object VisitExpect_error_([NotNull] EasyScriptParser.Expect_error_Context context)
     {
       // Retrieve the expected error argument
-      ITerminalNode expectedErrorNode = context.WORD() ?? context.STRING();
-      NonNamedArgument expectedError = new NonNamedArgument(expectedErrorNode.GetText().Trim('"').Trim('\''));
+      NonNamedArgument expectedError = new NonNamedArgument(Visit(context.data()).ToString());
 
       // Retrieve the unknown command information
       EasyScriptParser.UnknownCommandContext unknownCommandContext = context.unknownCommand();
@@ -148,6 +146,30 @@ namespace EasyAccept.Core.Interpreter
       return null;
     }
 
+    public override object VisitData([NotNull] EasyScriptParser.DataContext context)
+    {
+      if (context.WORD() != null)
+      {
+        return context.WORD().GetText();
+      }
+
+      if (context.VARIABLE() != null)
+      {
+        string variableName = context.VARIABLE().GetText().TrimStart('$').TrimStart('{').TrimEnd('}');
+        string variableData = Variables[variableName] ?? throw new SyntaxException("Variable " + variableName + " is not defined.");
+        return variableData;
+      }
+
+      if (context.STRING() != null)
+      {
+        string stringData = context.STRING().GetText().Trim('"').Trim('\'');
+        stringData = ReplaceVariablesOnInput(stringData);
+        return stringData;
+      }
+
+      throw new SyntaxException("Unexpected data type.");
+    }
+
     private List<IEasyArgument> ArgumentListContextToArguments(EasyScriptParser.ArgumentListContext arglcv)
     {
       List<IEasyArgument> args = ParseArguments(arglcv);
@@ -194,6 +216,17 @@ namespace EasyAccept.Core.Interpreter
       args.Add(easyArgument);
 
       return args;
+    }
+
+    private string ReplaceVariablesOnInput(string input)
+    {
+      foreach (var variable in Variables)
+      {
+        string placeholder = "${" + variable.Key + "}";
+        input = input.Replace(placeholder, variable.Value);
+      }
+
+      return input;
     }
   }
 }

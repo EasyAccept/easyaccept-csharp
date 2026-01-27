@@ -98,5 +98,11 @@ public interface IEasyScriptVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
 	Result VisitArgument([NotNull] EasyScriptParser.ArgumentContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="EasyScriptParser.data"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitData([NotNull] EasyScriptParser.DataContext context);
 }
 } // namespace EasyAccept.Core.Grammar

@@ -168,6 +168,18 @@ public partial class EasyScriptBaseListener : IEasyScriptListener {
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	public virtual void ExitArgument([NotNull] EasyScriptParser.ArgumentContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="EasyScriptParser.data"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterData([NotNull] EasyScriptParser.DataContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="EasyScriptParser.data"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitData([NotNull] EasyScriptParser.DataContext context) { }
 
 	/// <inheritdoc/>
 	/// <remarks>The default implementation does nothing.</remarks>

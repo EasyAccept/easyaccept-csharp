@@ -141,5 +141,15 @@ public interface IEasyScriptListener : IParseTreeListener {
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	void ExitArgument([NotNull] EasyScriptParser.ArgumentContext context);
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="EasyScriptParser.data"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterData([NotNull] EasyScriptParser.DataContext context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="EasyScriptParser.data"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitData([NotNull] EasyScriptParser.DataContext context);
 }
 } // namespace EasyAccept.Core.Grammar
