@@ -13,3 +13,7 @@ To contribute to this project, you can fork this repository and submit a pull re
 We use the ANTLR4 library to parse the test scripts, with all the code writed on [easyscript-antlr4](https://github.com/EasyAccept/easyscript-antlr4) repository. So, priorize edit the original repository instead the git submodule.
 
 The grammar is defined in the [`EasyScript.g4`](/easyscript-antlr4/EasyScript.g4) file. If you want to update the grammar, you can do so by editing this file and running `./update-grammar.sh` to generate the parser. Running the script, the required ANTLR4 library will be downloaded and the parser will be generated. You will need to have [Docker](https://docs.docker.com/get-docker/) installed to run the script.
+
+### Release Notes
+
+To see the release notes, check the [CHANGELOG.md](/CHANGELOG.md) file.
