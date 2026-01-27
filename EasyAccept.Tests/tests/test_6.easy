@@ -2,3 +2,4 @@
 expectError "A exception was occurred" throwsAnException
 expectError "Different exception message" throwsAnException
 expectError "No exception" unknownMethodOne
+expectError "Passing parameters" throwsAPersonalizedException message="Passing parameters"

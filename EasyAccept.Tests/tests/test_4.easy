@@ -1,3 +1,4 @@
 # Test a unknown method call
 # This action calls a method inside the facade
 unknownMethodOne
+unknownMethodTwo param1="value1" param2="value2"

@@ -33,6 +33,7 @@ public class MainTest
     {
         EasyAcceptFacade<object> facade = new(new FakeFacade(), ["tests/test_4.easy"]);
         facade.ExecuteTests();
+        Console.WriteLine(facade.GetCompleteResults());
         Assert.Empty(facade.GetCompleteResults());
     }
 
@@ -53,5 +54,13 @@ public class MainTest
             "ExpectError command failed. Expected: \"Different exception message\", Actual: \"A exception was occurred\"\n" +
             "ExpectError command failed. Expected: \"No exception\", but no error was thrown.\n",
             facade.GetCompleteResults());
+    }
+
+    [Fact]
+    public void Test7()
+    {
+        EasyAcceptFacade<object> facade = new(new FakeFacade(), ["tests/test_7.easy"]);
+        facade.ExecuteTests();
+        Assert.Equal("The value of a is 42\n", facade.GetCompleteResults());
     }
 }

@@ -81,6 +81,12 @@ public interface IEasyScriptVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitUnknownCommand([NotNull] EasyScriptParser.UnknownCommandContext context);
 	/// <summary>
+	/// Visit a parse tree produced by <see cref="EasyScriptParser.assignment"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitAssignment([NotNull] EasyScriptParser.AssignmentContext context);
+	/// <summary>
 	/// Visit a parse tree produced by <see cref="EasyScriptParser.argumentList"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>

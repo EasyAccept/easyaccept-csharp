@@ -12,8 +12,20 @@ namespace EasyAccept.Core.Interpreter
 {
   public class EasyScriptVisitor<F> : EasyScriptBaseVisitor<object>
   {
+    /// <summary>
+    /// Facade instance used to execute commands on.
+    /// </summary>
     private readonly F Facade;
+
+    /// <summary>
+    /// Driver used to output messages during script execution.
+    /// </summary>
     private readonly IOutputDriver OutputDriver;
+
+    /// <summary>
+    /// Holds the variables defined during the script execution.
+    /// </summary>
+    private readonly Dictionary<string, string> Variables = new Dictionary<string, string>();
 
     public EasyScriptVisitor(F facade, IOutputDriver outputDriver)
     {
@@ -24,7 +36,7 @@ namespace EasyAccept.Core.Interpreter
     public override object VisitEcho_([NotNull] EasyScriptParser.Echo_Context context)
     {
       NonNamedArgument arg = new NonNamedArgument(context.STRING().GetText().Trim('"').Trim('\''));
-      ICommand command = new EchoCommand(arg, OutputDriver);
+      ICommand command = new EchoCommand(arg, OutputDriver, Variables);
       command.Execute();
       return null;
     }
@@ -49,7 +61,7 @@ namespace EasyAccept.Core.Interpreter
       UnknownCommand<F> unknownCommand = new UnknownCommand<F>(Facade, commandName, args);
       
       // Run the expect command
-      ICommand command = new ExpectCommand<F>(unknownCommand, expectedOutput);
+      ICommand command = new ExpectCommand<F>(unknownCommand, expectedOutput, Variables);
       try
       {
         command.Execute();
@@ -90,8 +102,11 @@ namespace EasyAccept.Core.Interpreter
 
     public override object VisitUnknownCommand([NotNull] EasyScriptParser.UnknownCommandContext context)
     {
+      // Retrieve the unknown command information
       string commandName = context.WORD().GetText();
       List<IEasyArgument> args = ArgumentListContextToArguments(context.argumentList());
+
+      // Execute the unknown command
       ICommand command = new UnknownCommand<F>(Facade, commandName, args);
       try
       {
@@ -101,8 +116,37 @@ namespace EasyAccept.Core.Interpreter
       {
         OutputDriver.WriteLine(ex.Message);
       }
+
       return null;
+    }
+
+    public override object VisitAssignment([NotNull] EasyScriptParser.AssignmentContext context)
+    {
+      // Create the variable
+      string variableName = context.WORD().GetText();
+      Variables[variableName] = string.Empty; // Initialize with empty string, will be updated later
+
+      // Retrieve the unknown command information
+      EasyScriptParser.UnknownCommandContext unknownCommandContext = context.unknownCommand();
+      string commandName = unknownCommandContext.WORD().GetText();
+      List<IEasyArgument> args = ArgumentListContextToArguments(unknownCommandContext.argumentList());
+
+      // Execute the unknown command
+      UnknownCommand<F> command = new UnknownCommand<F>(Facade, commandName, args);
+      try
+      {
+        command.Execute();
       }
+      catch (CommandException ex)
+      {
+        OutputDriver.WriteLine(ex.Message);
+      }
+
+      // Store the result in the variable
+      Variables[variableName] = command.Result ?? string.Empty;
+
+      return null;
+    }
 
     private List<IEasyArgument> ArgumentListContextToArguments(EasyScriptParser.ArgumentListContext arglcv)
     {

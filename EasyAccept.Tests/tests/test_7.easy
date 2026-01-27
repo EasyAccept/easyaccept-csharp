@@ -1,0 +1,4 @@
+# Testing assignment
+a=theAnswer
+echo "The value of a is ${a}"
+expect "${a}" theAnswer
