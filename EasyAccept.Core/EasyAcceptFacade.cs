@@ -38,10 +38,13 @@ namespace EasyAccept.Core
         EasyScriptLexer lexer = new EasyScriptLexer(charStream);
         CommonTokenStream tokens = new CommonTokenStream(lexer);
         EasyScriptParser parser = new EasyScriptParser(tokens);
-        // parser.AddErrorListener(new ConsoleErrorListener<object>());
         parser.BuildParseTree = true;
 
-        // Check for syntax errors
+        // Add semantic listener
+        EasyScriptSemanticListener semanticListener = new EasyScriptSemanticListener();
+        parser.AddParseListener(semanticListener);
+
+        // Check for syntax or semantic errors
         EasyScriptParser.EasyContext tree = parser.easy();
         if (parser.NumberOfSyntaxErrors > 0)
         {

@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using Antlr4.Runtime.Misc;
-using Antlr4.Runtime.Tree;
 using EasyAccept.Core.Grammar;
 using EasyAccept.Core.Interpreter.Arguments;
 using EasyAccept.Core.Interpreter.Commands;
@@ -156,7 +155,7 @@ namespace EasyAccept.Core.Interpreter
       if (context.VARIABLE() != null)
       {
         string variableName = context.VARIABLE().GetText().TrimStart('$').TrimStart('{').TrimEnd('}');
-        string variableData = Variables[variableName] ?? throw new SyntaxException("Variable " + variableName + " is not defined.");
+        string variableData = Variables[variableName];
         return variableData;
       }
 
@@ -167,7 +166,7 @@ namespace EasyAccept.Core.Interpreter
         return stringData;
       }
 
-      throw new SyntaxException("Unexpected data type.");
+      return null;
     }
 
     private List<IEasyArgument> ArgumentListContextToArguments(EasyScriptParser.ArgumentListContext arglcv)
@@ -195,7 +194,7 @@ namespace EasyAccept.Core.Interpreter
       }
 
       // Get the current argument
-      EasyScriptParser.ArgumentContext argcv = arglcv.argument() ?? throw new SyntaxException("Unexpected end of input.");
+      EasyScriptParser.ArgumentContext argcv = arglcv.argument();
 
       // Get the argument text
       string argv = argcv.GetText();
