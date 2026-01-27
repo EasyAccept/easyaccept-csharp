@@ -2,17 +2,24 @@
 
   <PropertyGroup>
     <TargetFrameworks>net48;net10.0</TargetFrameworks>
-    <Version>1.0.0</Version>
+    <Version>1.0.4</Version>
     <PackageTags>EasyAccept;EasyScript;Easy</PackageTags>
     <Description>
       EasyAccept is a tool to automate acceptance testing for your project in an easy way. All you have to do is to provide test scripts written in simple, client-readable commands, and a Facade to your program. EasyAccept does the rest for you.
       It's a C# implementation of the original EasyAccept, written in Java: https://sourceforge.net/projects/easyaccept/.
       The source code is available at: https://github.com/EasyAccept/easyaccept-csharp/
     </Description>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <PackageProjectUrl>https://github.com/EasyAccept/</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/EasyAccept/easyaccept-csharp/</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Antlr4.Runtime.Standard" Version="4.13.1" />
+    <None Include="..\README.md" Pack="true" PackagePath="\" />
+    <None Include="..\LICENSE" Pack="true" PackagePath="\" />
   </ItemGroup>
 
 </Project>
