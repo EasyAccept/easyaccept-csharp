@@ -56,9 +56,9 @@ namespace EasyAccept.Core.Interpreter.Commands
       foreach (ParameterInfo parameter in method.GetParameters())
       {
         // IMPORTANT: Currently only string arguments are supported
-        if (parameter.GetType() != typeof(string))
+        if (parameter.ParameterType != typeof(string))
         {
-          throw new CommandException("Parameter " + parameter.Name + " in method " + CommandName + " is not of type string.");
+          throw new CommandException("Parameter " + parameter.Name + " in method " + CommandName + " is not of type string. Type " + parameter.ParameterType.Name + " is not supported.");
         }
         string argumentName = parameter.Name ?? throw new CommandException("Parameter name is null.");
         IEasyArgument matchingArg = Arguments.FirstOrDefault(arg => arg.Name == argumentName) ?? throw new CommandException("Argument " + argumentName + " not found for method " + CommandName + ".");
