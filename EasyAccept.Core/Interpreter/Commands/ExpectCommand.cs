@@ -1,5 +1,6 @@
 using EasyAccept.Core.Interpreter.Arguments;
 using EasyAccept.Core.Interpreter.Exceptions;
+using EasyAccept.Core.Interpreter.Results;
 
 namespace EasyAccept.Core.Interpreter.Commands
 {
@@ -14,14 +15,15 @@ namespace EasyAccept.Core.Interpreter.Commands
       ExpectedOutput = expectedOutput;
     }
 
-    public void Execute()
+    public IResult Execute()
     {
-      UnknownCommand.Execute();
-      string actualOutput = UnknownCommand.Result;
+      IResult unknownCommandResult = UnknownCommand.Execute();
+      string actualOutput = unknownCommandResult.ToString();
       if (actualOutput != ExpectedOutput.ToString())
       {
         throw new CommandException($"Expect command failed. Expected: \"{ExpectedOutput}\", Actual: \"{actualOutput}\"");
       }
+      return new SuccessfulResult("", true);
     }
   }
 }

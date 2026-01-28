@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using EasyAccept.Core.Interpreter.Arguments;
 using EasyAccept.Core.Interpreter.Exceptions;
+using EasyAccept.Core.Interpreter.Results;
 
 namespace EasyAccept.Core.Interpreter.Commands
 {
@@ -12,7 +13,6 @@ namespace EasyAccept.Core.Interpreter.Commands
     private readonly F Facade;
     private readonly string CommandName;
     private readonly List<IEasyArgument> Arguments;
-    public string Result { get; private set; } = null;
 
     public UnknownCommand(F facade, string commandName, List<IEasyArgument> args)
     {
@@ -21,7 +21,7 @@ namespace EasyAccept.Core.Interpreter.Commands
       Arguments = args;
     }
 
-    public void Execute()
+    public IResult Execute()
     {
       Type facadeType = Facade.GetType() ?? throw new CommandException("Facade type is null.");
 
@@ -72,13 +72,15 @@ namespace EasyAccept.Core.Interpreter.Commands
 
         if (method.ReturnType == typeof(string))
         {
-          Result = (string)result;
+          return new SuccessfulResult((string)result);
         }
       }
       catch (Exception ex)
       {
         throw CommandException.CreateBy(ex.InnerException ?? ex);
       }
+
+      return new SuccessfulResult();
     }
   }
 }

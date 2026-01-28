@@ -1,10 +1,11 @@
 using EasyAccept.Core.Interpreter.Exceptions;
+using EasyAccept.Core.Interpreter.Results;
 
 namespace EasyAccept.Core.Interpreter.Commands
 {
   public class QuitCommand : ICommand
   {
-    public void Execute()
+    public IResult Execute()
     {
       throw new QuitException();
     }

@@ -1,5 +1,6 @@
 using EasyAccept.Core.Interpreter.Arguments;
 using EasyAccept.Core.Interpreter.Exceptions;
+using EasyAccept.Core.Interpreter.Results;
 
 namespace EasyAccept.Core.Interpreter.Commands
 {
@@ -14,7 +15,7 @@ namespace EasyAccept.Core.Interpreter.Commands
       ExpectedError = expectedError;
     }
 
-    public void Execute()
+    public IResult Execute()
     {
       try
       {
@@ -27,7 +28,7 @@ namespace EasyAccept.Core.Interpreter.Commands
           throw new CommandException($"ExpectError command failed. Expected: \"{ExpectedError}\", Actual: \"{ex.Message}\"");
         }
 
-        return; // Expected error occurred
+        return new SuccessfulResult("", true); // Expected error occurred
       }
 
       throw new CommandException($"ExpectError command failed. Expected: \"{ExpectedError}\", but no error was thrown.");

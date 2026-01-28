@@ -4,29 +4,37 @@ using EasyAccept.Core.Exceptions;
 using EasyAccept.Core.Grammar;
 using EasyAccept.Core.Interpreter;
 using EasyAccept.Core.Interpreter.Exceptions;
-using EasyAccept.Core.Output;
+using EasyAccept.Core.Interpreter.Results;
 
 namespace EasyAccept.Core
 {
   public class EasyAcceptFacade<F>
   {
+    /// <summary>
+    /// The facade instance used for executing commands.
+    /// </summary>
     private readonly F Facade;
-    private readonly List<string> Files;
-    private string CompleteResults = "";
-    private readonly IOutputDriver OutputDriver;
 
-    public EasyAcceptFacade(F facade, List<string> files, IOutputDriver outputDriver)
-    {
-      Facade = facade;
-      Files = files;
-      OutputDriver = outputDriver;
-    }
+    /// <summary>
+    /// The list of results from test executions.
+    /// </summary>
+    private readonly List<string> Files;
+
+    /// <summary>
+    /// The list of results from test executions. The results are stored as IResult instances and grouped by test file.
+    /// </summary>
+    public readonly Dictionary<string, List<IResult>> Results = new Dictionary<string, List<IResult>>();
+    
+    /// <summary>
+    /// Initializes a new instance of the <see cref="EasyAcceptFacade{F}"/> class.
+    /// </summary>
+    /// <param name="facade">The facade instance to be used for executing commands.</param>
+    /// <param name="files">The list of test script files to be executed.</param>
 
     public EasyAcceptFacade(F facade, List<string> files)
     {
       Facade = facade;
       Files = files;
-      OutputDriver = new GenericOutputDriver();
     }
 
     public void ExecuteTests()
@@ -51,8 +59,11 @@ namespace EasyAccept.Core
           throw new EasyAcceptException("File '" + file + "' has " + parser.NumberOfSyntaxErrors + " syntax errors.");
         }
 
+        // Construct the results list
+        Results[file] = new List<IResult>();
+
         // Execute tests using the Visitor
-        EasyScriptVisitor<F> visitor = new EasyScriptVisitor<F>(Facade, OutputDriver);
+        EasyScriptVisitor<F> visitor = new EasyScriptVisitor<F>(Facade);
         try
         {
           visitor.Visit(tree);
@@ -60,18 +71,215 @@ namespace EasyAccept.Core
         catch (QuitException ex)
         {
           // Stop execution on Quit command
-          OutputDriver.WriteLine(ex.Message);
-          CompleteResults += OutputDriver.GetContent();
-          return;
+          Results[file].AddRange(visitor.Results);
+          Results[file].Add(new PrintableResult(ex.Message));
+          break;
         }
 
-        CompleteResults += OutputDriver.GetContent();
+        Results[file].AddRange(visitor.Results);
       }
     }
 
     public string GetCompleteResults()
     {
-      return CompleteResults;
+      string completeResults = "";
+
+      foreach (KeyValuePair<string, List<IResult>> resultsByFile in Results)
+      {
+        string result = GetScriptCompleteResults(resultsByFile.Key);
+        completeResults += result;
+        if (!result.EndsWith("\n\n"))
+        {
+          completeResults += "\n"; // Add the secondary newline if not present
+        }
+        completeResults += "==============================\n";
+      }
+
+      return completeResults;
+    }
+
+    public string GetScriptCompleteResults(string scriptFile)
+    {
+      if (!Results.ContainsKey(scriptFile))
+      {
+        throw new EasyAcceptException($"No results found for the script file \"{scriptFile}\".");
+      }
+
+      string completeResults = "";
+
+      int passedTests = 0;
+      int failedTests = 0;
+      string fileResults = "";
+
+      foreach (IResult result in Results[scriptFile])
+      {
+        if (result.AreAssertion && result.IsSuccess)
+        {
+          passedTests++;
+        }
+        else if (result.AreAssertion && !result.IsSuccess)
+        {
+          failedTests++;
+        }
+
+        if (result.NeedToBePrinted)
+        {
+          fileResults += result.ToString() + "\n";
+        }
+      }
+
+      completeResults += $"Test file: {scriptFile} | Passed Tests: {passedTests} | Not Passed Tests: {failedTests}\n";
+      if (fileResults != "")
+      {
+        completeResults += $"\n{fileResults}";
+      }
+
+      return completeResults;
+    }
+
+    public string GetSummarizedResults()
+    {
+      string completeResults = "";
+
+      foreach (KeyValuePair<string, List<IResult>> resultsByFile in Results)
+      {
+        completeResults += GetScriptSummarizedResults(resultsByFile.Key);
+      }
+
+      return completeResults;
+    }
+    
+    public string GetScriptSummarizedResults(string scriptFile)
+    {
+      if (!Results.ContainsKey(scriptFile))
+      {
+        throw new EasyAcceptException($"No results found for the script file \"{scriptFile}\".");
+      }
+
+      string completeResults = "";
+
+      int passedTests = 0;
+      int failedTests = 0;
+
+      foreach (IResult result in Results[scriptFile])
+      {
+        if (result.AreAssertion && result.IsSuccess)
+        {
+          passedTests++;
+        }
+        else if (result.AreAssertion && !result.IsSuccess)
+        {
+          failedTests++;
+        }
+      }
+
+      completeResults += $"Test file: {scriptFile} | Passed Tests: {passedTests} | Not Passed Tests: {failedTests}\n";
+
+      return completeResults;
+    }
+
+    public List<IResult> GetScriptResults(string scriptFile)
+    {
+      if (!Results.ContainsKey(scriptFile))
+      {
+        throw new EasyAcceptException($"No results found for the script file \"{scriptFile}\".");
+      }
+
+      return Results[scriptFile];
+    }
+
+    public int GetTotalNumberOfPassedTests()
+    {
+      int totalPassedTests = 0;
+
+      foreach (KeyValuePair<string, List<IResult>> resultsByFile in Results)
+      {
+        totalPassedTests += GetScriptNumberOfPassedTests(resultsByFile.Key);
+      }
+
+      return totalPassedTests;
+    }
+
+    public int GetTotalNumberOfNotPassedTests()
+    {
+      int totalNotPassedTests = 0;
+
+      foreach (KeyValuePair<string, List<IResult>> resultsByFile in Results)
+      {
+        totalNotPassedTests += GetScriptNumberOfNotPassedTests(resultsByFile.Key);
+      }
+
+      return totalNotPassedTests;
+    }
+
+    public int GetScriptNumberOfPassedTests(string scriptFile)
+    {
+      if (!Results.ContainsKey(scriptFile))
+      {
+        throw new EasyAcceptException($"No results found for the script file \"{scriptFile}\".");
+      }
+
+      int passedTests = 0;
+
+      foreach (IResult result in Results[scriptFile])
+      {
+        if (result.AreAssertion && result.IsSuccess)
+        {
+          passedTests++;
+        }
+      }
+
+      return passedTests;
+    }
+    
+    public int GetScriptNumberOfNotPassedTests(string scriptFile)
+    {
+      if (!Results.ContainsKey(scriptFile))
+      {
+        throw new EasyAcceptException($"No results found for the script file \"{scriptFile}\".");
+      }
+
+      int notPassedTests = 0;
+
+      foreach (IResult result in Results[scriptFile])
+      {
+        if (result.AreAssertion && !result.IsSuccess)
+        {
+          notPassedTests++;
+        }
+      }
+
+      return notPassedTests;
+    }
+
+    public int GetTotalNumberOfTests()
+    {
+      return GetTotalNumberOfPassedTests() + GetTotalNumberOfNotPassedTests();
+    }
+
+    public int GetScriptTotalNumberOfTests(string scriptFile)
+    {
+      return GetScriptNumberOfPassedTests(scriptFile) + GetScriptNumberOfNotPassedTests(scriptFile);
+    }
+
+    public List<IResult> GetScriptFailures(string scriptFile)
+    {
+      if (!Results.ContainsKey(scriptFile))
+      {
+        throw new EasyAcceptException($"No results found for the script file \"{scriptFile}\".");
+      }
+
+      List<IResult> failures = new List<IResult>();
+
+      foreach (IResult result in Results[scriptFile])
+      {
+        if (result.AreAssertion && !result.IsSuccess)
+        {
+          failures.Add(result);
+        }
+      }
+
+      return failures;
     }
   }
 }

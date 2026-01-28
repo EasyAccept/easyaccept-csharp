@@ -4,7 +4,7 @@ using EasyAccept.Core.Grammar;
 using EasyAccept.Core.Interpreter.Arguments;
 using EasyAccept.Core.Interpreter.Commands;
 using EasyAccept.Core.Interpreter.Exceptions;
-using EasyAccept.Core.Output;
+using EasyAccept.Core.Interpreter.Results;
 using ICommand = EasyAccept.Core.Interpreter.Commands.ICommand;
 
 namespace EasyAccept.Core.Interpreter
@@ -17,33 +17,31 @@ namespace EasyAccept.Core.Interpreter
     private readonly F Facade;
 
     /// <summary>
-    /// Driver used to output messages during script execution.
+    /// List of results from command executions.
     /// </summary>
-    private readonly IOutputDriver OutputDriver;
+    public readonly List<IResult> Results = new List<IResult>();
 
     /// <summary>
     /// Holds the variables defined during the script execution.
     /// </summary>
     private readonly Dictionary<string, string> Variables = new Dictionary<string, string>();
 
-    public EasyScriptVisitor(F facade, IOutputDriver outputDriver)
-    {
-      Facade = facade;
-      OutputDriver = outputDriver;
-    }
+    public EasyScriptVisitor(F facade) => Facade = facade;
 
     public override object VisitEcho_([NotNull] EasyScriptParser.Echo_Context context)
     {
       NonNamedArgument arg = new NonNamedArgument(Visit(context.data()).ToString());
-      ICommand command = new EchoCommand(arg, OutputDriver);
-      command.Execute();
+      ICommand command = new EchoCommand(arg);
+      IResult result = command.Execute();
+      Results.Add(result);
       return null;
     }
 
     public override object VisitQuit_([NotNull] EasyScriptParser.Quit_Context context)
     {
       ICommand command = new QuitCommand();
-      command.Execute();
+      IResult result = command.Execute();
+      Results.Add(result);
       return null;
     }
 
@@ -57,18 +55,20 @@ namespace EasyAccept.Core.Interpreter
       string commandName = unknownCommandContext.WORD().GetText();
       List<IEasyArgument> args = ArgumentListContextToArguments(unknownCommandContext.argumentList());
       UnknownCommand<F> unknownCommand = new UnknownCommand<F>(Facade, commandName, args);
-      
+
       // Run the expect command
       ICommand command = new ExpectCommand<F>(unknownCommand, expectedOutput);
+      IResult result;
       try
       {
-        command.Execute();
+        result = command.Execute();
       }
       catch (CommandException ex)
       {
-        OutputDriver.WriteLine(ex.Message);        
+        result = new FailedResult(ex.Message, true);
       }
 
+      Results.Add(result);
       return null;
     }
 
@@ -85,15 +85,17 @@ namespace EasyAccept.Core.Interpreter
 
       // Run the expect error command
       ICommand command = new ExpectErrorCommand<F>(unknownCommand, expectedError);
+      IResult result;
       try
       {
-        command.Execute();
+        result = command.Execute();
       }
       catch (CommandException ex)
       {
-        OutputDriver.WriteLine(ex.Message);
+        result = new FailedResult(ex.Message, true);
       }
 
+      Results.Add(result);
       return null;
     }
 
@@ -105,15 +107,17 @@ namespace EasyAccept.Core.Interpreter
 
       // Execute the unknown command
       ICommand command = new UnknownCommand<F>(Facade, commandName, args);
+      IResult result;
       try
       {
-        command.Execute();
+        result = command.Execute();
       }
       catch (CommandException ex)
       {
-        OutputDriver.WriteLine(ex.Message);
+        result = new FailedResult(ex.Message);
       }
 
+      Results.Add(result);
       return null;
     }
 
@@ -121,7 +125,7 @@ namespace EasyAccept.Core.Interpreter
     {
       // Create the variable
       string variableName = context.WORD().GetText();
-      Variables[variableName] = string.Empty; // Initialize with empty string, will be updated later
+      Variables[variableName] = ""; // Initialize with empty string, will be updated later
 
       // Retrieve the unknown command information
       EasyScriptParser.UnknownCommandContext unknownCommandContext = context.unknownCommand();
@@ -130,18 +134,23 @@ namespace EasyAccept.Core.Interpreter
 
       // Execute the unknown command
       UnknownCommand<F> command = new UnknownCommand<F>(Facade, commandName, args);
+      IResult result;
       try
       {
-        command.Execute();
+        result = command.Execute();
       }
       catch (CommandException ex)
       {
-        OutputDriver.WriteLine(ex.Message);
+        result = new FailedResult(ex.Message);
       }
 
-      // Store the result in the variable
-      Variables[variableName] = command.Result ?? string.Empty;
+      // Store the result in the variable if successful
+      if (result.IsSuccess)
+      {
+        Variables[variableName] = result.ToString() ?? "";
+      }
 
+      Results.Add(result);
       return null;
     }
 
