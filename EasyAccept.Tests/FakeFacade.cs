@@ -9,4 +9,5 @@ class FakeFacade
   public void throwsAnException() => throw new Exception("A exception was occurred");
   public void throwsAPersonalizedException(string message) => throw new Exception(message);
   public string theAnswer() => "42";
+  public string echoCommandWithParam(string value) => value;
 }

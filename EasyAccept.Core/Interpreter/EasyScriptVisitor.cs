@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Antlr4.Runtime.Misc;
 using EasyAccept.Core.Grammar;
@@ -184,7 +185,7 @@ namespace EasyAccept.Core.Interpreter
       args.Reverse();
       return args;
     }
-    
+
     private List<IEasyArgument> ParseArguments(EasyScriptParser.ArgumentListContext arglcv) => ParseArguments(arglcv, new List<IEasyArgument>());
 
     private List<IEasyArgument> ParseArguments(EasyScriptParser.ArgumentListContext arglcv, List<IEasyArgument> args)
@@ -205,20 +206,12 @@ namespace EasyAccept.Core.Interpreter
       // Get the current argument
       EasyScriptParser.ArgumentContext argcv = arglcv.argument();
 
-      // Get the argument text
-      string argv = argcv.GetText();
+      // With the argument, get the WORD and the data
+      string argName = argcv.WORD().GetText();
+      string argValue = Visit(argcv.data()).ToString() ?? "";
 
       // Create the appropriate argument type
-      string[] argument = argv.Split('=');
-      IEasyArgument easyArgument;
-      if (argument.Length == 2)
-      {
-        easyArgument = new NamedArgument(argument[0], argument[1].Trim('"').Trim('\''));
-      }
-      else
-      {
-        easyArgument = new NonNamedArgument(argument[0].Trim('"').Trim('\''));
-      }
+      IEasyArgument easyArgument = new NamedArgument(argName, argValue);
 
       // Push the argument to the list
       args.Add(easyArgument);

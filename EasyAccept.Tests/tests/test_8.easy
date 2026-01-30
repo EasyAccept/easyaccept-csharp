@@ -1,0 +1,4 @@
+# Testing passing a value as parameter
+a=theAnswer
+echo "The value of a is ${a}"
+expect 42 echoCommandWithParam value=${a}

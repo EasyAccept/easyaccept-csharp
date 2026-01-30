@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.1.1](https://github.com/EasyAccept/easyaccept-csharp/releases/tag/1.1.1)
+
+- Fixed variable detection and parser during parameters usage
+
 ## [1.1.0](https://github.com/EasyAccept/easyaccept-csharp/releases/tag/1.1.0)
 
 - GetCompleteResults refactored to return a more equivalent return as the original EasyAccept

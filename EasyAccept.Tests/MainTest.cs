@@ -117,4 +117,19 @@ public class MainTest
         Assert.Equal(1, facade.GetScriptNumberOfPassedTests("tests/test_7.easy"));
         Assert.Equal(0, facade.GetScriptNumberOfNotPassedTests("tests/test_7.easy"));
     }
+
+    [Fact]
+    public void Test8()
+    {
+        EasyAcceptFacade<object> facade = new(new FakeFacade(), ["tests/test_8.easy"]);
+        facade.ExecuteTests();
+        Assert.Equal("Test file: tests/test_8.easy | Passed Tests: 1 | Not Passed Tests: 0\n\nThe value of a is 42\n\n==============================\n", facade.GetCompleteResults());
+        Assert.Equal("Test file: tests/test_8.easy | Passed Tests: 1 | Not Passed Tests: 0\n\nThe value of a is 42\n", facade.GetScriptCompleteResults("tests/test_8.easy"));
+        Assert.Equal("Test file: tests/test_8.easy | Passed Tests: 1 | Not Passed Tests: 0\n", facade.GetSummarizedResults());
+        Assert.Equal("Test file: tests/test_8.easy | Passed Tests: 1 | Not Passed Tests: 0\n", facade.GetScriptSummarizedResults("tests/test_8.easy"));
+        Assert.Equal(1, facade.GetTotalNumberOfPassedTests());
+        Assert.Equal(0, facade.GetTotalNumberOfNotPassedTests());
+        Assert.Equal(1, facade.GetScriptNumberOfPassedTests("tests/test_8.easy"));
+        Assert.Equal(0, facade.GetScriptNumberOfNotPassedTests("tests/test_8.easy"));
+    }
 }
