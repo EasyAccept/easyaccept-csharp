@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFrameworks>net48;net10.0</TargetFrameworks>
-    <Version>1.1.1</Version>
+    <Version>1.2.0</Version>
     <PackageTags>EasyAccept;EasyScript;Easy</PackageTags>
     <Description>
       EasyAccept is a tool to automate acceptance testing for your project in an easy way. All you have to do is to provide test scripts written in simple, client-readable commands, and a Facade to your program. EasyAccept does the rest for you.

@@ -5,6 +5,7 @@ using EasyAccept.Core.Grammar;
 using EasyAccept.Core.Interpreter.Arguments;
 using EasyAccept.Core.Interpreter.Commands;
 using EasyAccept.Core.Interpreter.Exceptions;
+using EasyAccept.Core.Interpreter.Listeners;
 using EasyAccept.Core.Interpreter.Results;
 using ICommand = EasyAccept.Core.Interpreter.Commands.ICommand;
 
@@ -23,18 +24,25 @@ namespace EasyAccept.Core.Interpreter
     public readonly List<IResult> Results = new List<IResult>();
 
     /// <summary>
+    /// List of listeners for results during test execution.
+    /// </summary>
+    public readonly List<IResultsListener> ResultsListeners = new List<IResultsListener>();
+
+    /// <summary>
     /// Holds the variables defined during the script execution.
     /// </summary>
     private readonly Dictionary<string, string> Variables = new Dictionary<string, string>();
 
     public EasyScriptVisitor(F facade) => Facade = facade;
 
+    public void AddResultsListener(IResultsListener listener) => ResultsListeners.Add(listener);
+
     public override object VisitEcho_([NotNull] EasyScriptParser.Echo_Context context)
     {
       NonNamedArgument arg = new NonNamedArgument(Visit(context.data()).ToString());
       ICommand command = new EchoCommand(arg);
       IResult result = command.Execute();
-      Results.Add(result);
+      AddResult(result);
       return null;
     }
 
@@ -42,7 +50,7 @@ namespace EasyAccept.Core.Interpreter
     {
       ICommand command = new QuitCommand();
       IResult result = command.Execute();
-      Results.Add(result);
+      AddResult(result);
       return null;
     }
 
@@ -69,7 +77,7 @@ namespace EasyAccept.Core.Interpreter
         result = new FailedResult(ex.Message, true);
       }
 
-      Results.Add(result);
+      AddResult(result);
       return null;
     }
 
@@ -96,7 +104,7 @@ namespace EasyAccept.Core.Interpreter
         result = new FailedResult(ex.Message, true);
       }
 
-      Results.Add(result);
+      AddResult(result);
       return null;
     }
 
@@ -118,7 +126,7 @@ namespace EasyAccept.Core.Interpreter
         result = new FailedResult(ex.Message);
       }
 
-      Results.Add(result);
+      AddResult(result);
       return null;
     }
 
@@ -151,7 +159,7 @@ namespace EasyAccept.Core.Interpreter
         Variables[variableName] = result.ToString() ?? "";
       }
 
-      Results.Add(result);
+      AddResult(result);
       return null;
     }
 
@@ -228,6 +236,20 @@ namespace EasyAccept.Core.Interpreter
       }
 
       return input;
+    }
+
+    private void AddResult(IResult result)
+    {
+      Results.Add(result);
+      NotifyListeners(result);
+    }
+
+    private void NotifyListeners(IResult result)
+    {
+      foreach (IResultsListener listener in ResultsListeners)
+      {
+        listener.OnResult(result);
+      }
     }
   }
 }

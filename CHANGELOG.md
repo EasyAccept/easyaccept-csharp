@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.2.0](https://github.com/EasyAccept/easyaccept-csharp/releases/tag/1.2.0)
+
+- Results listener added on project
+
 ## [1.1.1](https://github.com/EasyAccept/easyaccept-csharp/releases/tag/1.1.1)
 
 - Fixed variable detection and parser during parameters usage

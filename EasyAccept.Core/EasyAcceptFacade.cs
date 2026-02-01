@@ -4,6 +4,7 @@ using EasyAccept.Core.Exceptions;
 using EasyAccept.Core.Grammar;
 using EasyAccept.Core.Interpreter;
 using EasyAccept.Core.Interpreter.Exceptions;
+using EasyAccept.Core.Interpreter.Listeners;
 using EasyAccept.Core.Interpreter.Results;
 
 namespace EasyAccept.Core
@@ -16,7 +17,7 @@ namespace EasyAccept.Core
     private readonly F Facade;
 
     /// <summary>
-    /// The list of results from test executions.
+    /// The list of test script files to be executed.
     /// </summary>
     private readonly List<string> Files;
 
@@ -24,7 +25,12 @@ namespace EasyAccept.Core
     /// The list of results from test executions. The results are stored as IResult instances and grouped by test file.
     /// </summary>
     public readonly Dictionary<string, List<IResult>> Results = new Dictionary<string, List<IResult>>();
-    
+
+    /// <summary>
+    /// The list of listeners for results that will be notified during test execution.
+    /// </summary>
+    public readonly List<IResultsListener> ResultsListeners = new List<IResultsListener>();
+
     /// <summary>
     /// Initializes a new instance of the <see cref="EasyAcceptFacade{F}"/> class.
     /// </summary>
@@ -36,6 +42,8 @@ namespace EasyAccept.Core
       Facade = facade;
       Files = files;
     }
+    
+    public void AddResultsListener(IResultsListener listener) => ResultsListeners.Add(listener);
 
     public void ExecuteTests()
     {
@@ -62,8 +70,16 @@ namespace EasyAccept.Core
         // Construct the results list
         Results[file] = new List<IResult>();
 
-        // Execute tests using the Visitor
+        // Construct the visitor
         EasyScriptVisitor<F> visitor = new EasyScriptVisitor<F>(Facade);
+
+        // Add results listeners to the visitor
+        foreach (IResultsListener listener in ResultsListeners)
+        {
+          visitor.AddResultsListener(listener);
+        }
+
+        // Execute tests using the Visitor
         try
         {
           visitor.Visit(tree);
@@ -72,7 +88,16 @@ namespace EasyAccept.Core
         {
           // Stop execution on Quit command
           Results[file].AddRange(visitor.Results);
-          Results[file].Add(new PrintableResult(ex.Message));
+
+          // Create a result indicating that execution was stopped
+          IResult quitResult = new PrintableResult(ex.Message);
+
+          // Add a result indicating that execution was stopped
+          Results[file].Add(quitResult);
+
+          // Notify listeners about the quit result
+          NotifyListeners(quitResult);
+
           break;
         }
 
@@ -280,6 +305,14 @@ namespace EasyAccept.Core
       }
 
       return failures;
+    }
+
+    private void NotifyListeners(IResult result)
+    {
+      foreach (IResultsListener listener in ResultsListeners)
+      {
+        listener.OnResult(result);
+      }
     }
   }
 }
