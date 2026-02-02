@@ -136,15 +136,15 @@ public class MainTest
     [Fact]
     public void Test9()
     {
-        EasyAcceptFacade<object> facade = new(new object(), ["tests/test_9.easy"]);
+        EasyAcceptFacade<object> facade = new(new FakeFacade(), ["tests/test_9.easy"]);
         facade.ExecuteTests();
-        Assert.Equal("Test file: tests/test_9.easy | Passed Tests: 0 | Not Passed Tests: 0\n\nHello, World!\nこんにちは世界\n😊🚀🌟\nHej, världen!\nПривет, мир!\nمرحبا بالعالم!\nनमस्ते दुनिया!\n\n==============================\n", facade.GetCompleteResults());
-        Assert.Equal("Test file: tests/test_9.easy | Passed Tests: 0 | Not Passed Tests: 0\n\nHello, World!\nこんにちは世界\n😊🚀🌟\nHej, världen!\nПривет, мир!\nمرحبا بالعالم!\nनमस्ते दुनिया!\n", facade.GetScriptCompleteResults("tests/test_9.easy"));
-        Assert.Equal("Test file: tests/test_9.easy | Passed Tests: 0 | Not Passed Tests: 0\n", facade.GetSummarizedResults());
-        Assert.Equal("Test file: tests/test_9.easy | Passed Tests: 0 | Not Passed Tests: 0\n", facade.GetScriptSummarizedResults("tests/test_9.easy"));
-        Assert.Equal(0, facade.GetTotalNumberOfPassedTests());
+        Assert.Equal("Test file: tests/test_9.easy | Passed Tests: 7 | Not Passed Tests: 0\n\nHello, World!\nこんにちは世界\n😊🚀🌟\nHej, världen!\nПривет, мир!\nمرحبا بالعالم!\nनमस्ते दुनिया!\n\n==============================\n", facade.GetCompleteResults());
+        Assert.Equal("Test file: tests/test_9.easy | Passed Tests: 7 | Not Passed Tests: 0\n\nHello, World!\nこんにちは世界\n😊🚀🌟\nHej, världen!\nПривет, мир!\nمرحبا بالعالم!\nनमस्ते दुनिया!\n", facade.GetScriptCompleteResults("tests/test_9.easy"));
+        Assert.Equal("Test file: tests/test_9.easy | Passed Tests: 7 | Not Passed Tests: 0\n", facade.GetSummarizedResults());
+        Assert.Equal("Test file: tests/test_9.easy | Passed Tests: 7 | Not Passed Tests: 0\n", facade.GetScriptSummarizedResults("tests/test_9.easy"));
+        Assert.Equal(7, facade.GetTotalNumberOfPassedTests());
         Assert.Equal(0, facade.GetTotalNumberOfNotPassedTests());
-        Assert.Equal(0, facade.GetScriptNumberOfPassedTests("tests/test_9.easy"));
+        Assert.Equal(7, facade.GetScriptNumberOfPassedTests("tests/test_9.easy"));
         Assert.Equal(0, facade.GetScriptNumberOfNotPassedTests("tests/test_9.easy"));
     }
 }
