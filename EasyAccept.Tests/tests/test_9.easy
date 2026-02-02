@@ -1,0 +1,8 @@
+# Testing print unicode characters
+echo "Hello, World!"
+echo "こんにちは世界"
+echo "😊🚀🌟"
+echo "Hej, världen!"
+echo "Привет, мир!"
+echo "مرحبا بالعالم!"
+echo "नमस्ते दुनिया!"
