@@ -1,5 +1,10 @@
 # Changelog
 
+## [1.3.0](https://github.com/EasyAccept/easyaccept-csharp/releases/tag/1.3.0)
+
+- Adding support to echo be executed as command
+- Adding support to expectDifferent instruction
+
 ## [1.2.0](https://github.com/EasyAccept/easyaccept-csharp/releases/tag/1.2.0)
 
 - Results listener added on project
