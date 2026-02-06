@@ -92,6 +92,16 @@ public interface IEasyScriptListener : IParseTreeListener {
 	/// <param name="context">The parse tree.</param>
 	void ExitExpect_([NotNull] EasyScriptParser.Expect_Context context);
 	/// <summary>
+	/// Enter a parse tree produced by <see cref="EasyScriptParser.expect_different_"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterExpect_different_([NotNull] EasyScriptParser.Expect_different_Context context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="EasyScriptParser.expect_different_"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitExpect_different_([NotNull] EasyScriptParser.Expect_different_Context context);
+	/// <summary>
 	/// Enter a parse tree produced by <see cref="EasyScriptParser.expect_error_"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>

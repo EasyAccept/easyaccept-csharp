@@ -59,14 +59,65 @@ namespace EasyAccept.Core.Interpreter
       // Retrieve the expected output argument
       NonNamedArgument expectedOutput = new NonNamedArgument(Visit(context.data()).ToString());
 
-      // Retrieve the unknown command information
-      EasyScriptParser.UnknownCommandContext unknownCommandContext = context.unknownCommand();
-      string commandName = unknownCommandContext.WORD().GetText();
-      List<IEasyArgument> args = ArgumentListContextToArguments(unknownCommandContext.argumentList());
-      UnknownCommand<F> unknownCommand = new UnknownCommand<F>(Facade, commandName, args);
+      // Retrieve the command information to be executed and expected against. In both cases, we
+      // construct the ICommand instance to be executed, not visiting the context directly.
+      ICommand toBeExecutedCommand = null;
+      if (context.unknownCommand() != null)
+      {
+        // Retrieve the unknown command information
+        EasyScriptParser.UnknownCommandContext unknownCommandContext = context.unknownCommand();
+        string commandName = unknownCommandContext.WORD().GetText();
+        List<IEasyArgument> args = ArgumentListContextToArguments(unknownCommandContext.argumentList());
+        toBeExecutedCommand = new UnknownCommand<F>(Facade, commandName, args);
+      }
+      else if (context.echo_() != null)
+      {
+        // Retrieve the echo command information
+        NonNamedArgument echoArg = new NonNamedArgument(Visit(context.echo_().data()).ToString());
+        toBeExecutedCommand = new EchoCommand(echoArg);
+      }
 
       // Run the expect command
-      ICommand command = new ExpectCommand<F>(unknownCommand, expectedOutput);
+      ICommand command = new ExpectCommand(toBeExecutedCommand, expectedOutput);
+      IResult result;
+      try
+      {
+        result = command.Execute();
+      }
+      catch (CommandException ex)
+      {
+        result = new FailedResult(ex.Message, true);
+      }
+
+      AddResult(result);
+      return null;
+    }
+
+    public override object VisitExpect_different_([NotNull] EasyScriptParser.Expect_different_Context context)
+    {
+      // Retrieve the unexpected output argument
+      NonNamedArgument unexpectedOutput = new NonNamedArgument(Visit(context.data()).ToString());
+
+      // Retrieve the command information to be executed. In both cases, we
+      // construct the ICommand instance to be executed, not visiting the context directly.
+      ICommand toBeExecutedCommand = null;
+      if (context.unknownCommand() != null)
+      {
+        // Retrieve the unknown command information
+        EasyScriptParser.UnknownCommandContext unknownCommandContext = context.unknownCommand();
+        string commandName = unknownCommandContext.WORD().GetText();
+        List<IEasyArgument> args = ArgumentListContextToArguments(unknownCommandContext.argumentList());
+        toBeExecutedCommand = new UnknownCommand<F>(Facade, commandName, args);
+      }
+      else if (context.echo_() != null)
+      {
+        // Retrieve the echo command information
+        NonNamedArgument echoArg = new NonNamedArgument(Visit(context.echo_().data()).ToString());
+        toBeExecutedCommand = new EchoCommand(echoArg);
+      }
+
+      // Run the expect different command
+      ICommand command = new ExpectDifferentCommand(toBeExecutedCommand, unexpectedOutput);
       IResult result;
       try
       {

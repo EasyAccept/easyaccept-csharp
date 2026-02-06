@@ -109,6 +109,18 @@ public partial class EasyScriptBaseListener : IEasyScriptListener {
 	/// <param name="context">The parse tree.</param>
 	public virtual void ExitExpect_([NotNull] EasyScriptParser.Expect_Context context) { }
 	/// <summary>
+	/// Enter a parse tree produced by <see cref="EasyScriptParser.expect_different_"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterExpect_different_([NotNull] EasyScriptParser.Expect_different_Context context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="EasyScriptParser.expect_different_"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitExpect_different_([NotNull] EasyScriptParser.Expect_different_Context context) { }
+	/// <summary>
 	/// Enter a parse tree produced by <see cref="EasyScriptParser.expect_error_"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>

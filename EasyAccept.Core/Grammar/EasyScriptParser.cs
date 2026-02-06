@@ -37,23 +37,25 @@ public partial class EasyScriptParser : Parser {
 	protected static DFA[] decisionToDFA;
 	protected static PredictionContextCache sharedContextCache = new PredictionContextCache();
 	public const int
-		EQUAL=1, ECHO_=2, QUIT_=3, EXPECT_=4, EXPECT_ERROR_=5, WORD=6, VARIABLE=7, 
-		STRING=8, ENDLINE=9, SPACE=10, COMMENT=11;
+		EQUAL=1, ECHO_=2, QUIT_=3, EXPECT_=4, EXPECT_DIFFERENT_=5, EXPECT_ERROR_=6, 
+		WORD=7, VARIABLE=8, STRING=9, ENDLINE=10, SPACE=11, COMMENT=12;
 	public const int
 		RULE_easy = 0, RULE_instruction = 1, RULE_command = 2, RULE_echo_ = 3, 
-		RULE_quit_ = 4, RULE_expect_ = 5, RULE_expect_error_ = 6, RULE_unknownCommand = 7, 
-		RULE_assignment = 8, RULE_argumentList = 9, RULE_argument = 10, RULE_data = 11;
+		RULE_quit_ = 4, RULE_expect_ = 5, RULE_expect_different_ = 6, RULE_expect_error_ = 7, 
+		RULE_unknownCommand = 8, RULE_assignment = 9, RULE_argumentList = 10, 
+		RULE_argument = 11, RULE_data = 12;
 	public static readonly string[] ruleNames = {
-		"easy", "instruction", "command", "echo_", "quit_", "expect_", "expect_error_", 
-		"unknownCommand", "assignment", "argumentList", "argument", "data"
+		"easy", "instruction", "command", "echo_", "quit_", "expect_", "expect_different_", 
+		"expect_error_", "unknownCommand", "assignment", "argumentList", "argument", 
+		"data"
 	};
 
 	private static readonly string[] _LiteralNames = {
-		null, "'='", "'echo'", "'quit'", "'expect'", "'expectError'"
+		null, "'='", "'echo'", "'quit'", "'expect'", "'expectDifferent'", "'expectError'"
 	};
 	private static readonly string[] _SymbolicNames = {
-		null, "EQUAL", "ECHO_", "QUIT_", "EXPECT_", "EXPECT_ERROR_", "WORD", "VARIABLE", 
-		"STRING", "ENDLINE", "SPACE", "COMMENT"
+		null, "EQUAL", "ECHO_", "QUIT_", "EXPECT_", "EXPECT_DIFFERENT_", "EXPECT_ERROR_", 
+		"WORD", "VARIABLE", "STRING", "ENDLINE", "SPACE", "COMMENT"
 	};
 	public static readonly IVocabulary DefaultVocabulary = new Vocabulary(_LiteralNames, _SymbolicNames);
 
@@ -130,27 +132,28 @@ public partial class EasyScriptParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 28;
+			State = 30;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
-			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & 636L) != 0)) {
+			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & 1276L) != 0)) {
 				{
-				State = 26;
+				State = 28;
 				ErrorHandler.Sync(this);
 				switch (TokenStream.LA(1)) {
 				case ECHO_:
 				case QUIT_:
 				case EXPECT_:
+				case EXPECT_DIFFERENT_:
 				case EXPECT_ERROR_:
 				case WORD:
 					{
-					State = 24;
+					State = 26;
 					instruction();
 					}
 					break;
 				case ENDLINE:
 					{
-					State = 25;
+					State = 27;
 					Match(ENDLINE);
 					}
 					break;
@@ -158,16 +161,16 @@ public partial class EasyScriptParser : Parser {
 					throw new NoViableAltException(this);
 				}
 				}
-				State = 30;
+				State = 32;
 				ErrorHandler.Sync(this);
 				_la = TokenStream.LA(1);
 			}
-			State = 32;
+			State = 34;
 			ErrorHandler.Sync(this);
 			switch ( Interpreter.AdaptivePredict(TokenStream,2,Context) ) {
 			case 1:
 				{
-				State = 31;
+				State = 33;
 				Match(Eof);
 				}
 				break;
@@ -222,9 +225,9 @@ public partial class EasyScriptParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 34;
+			State = 36;
 			command();
-			State = 35;
+			State = 37;
 			_la = TokenStream.LA(1);
 			if ( !(_la==Eof || _la==ENDLINE) ) {
 			ErrorHandler.RecoverInline(this);
@@ -255,6 +258,9 @@ public partial class EasyScriptParser : Parser {
 		}
 		[System.Diagnostics.DebuggerNonUserCode] public Expect_Context expect_() {
 			return GetRuleContext<Expect_Context>(0);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public Expect_different_Context expect_different_() {
+			return GetRuleContext<Expect_different_Context>(0);
 		}
 		[System.Diagnostics.DebuggerNonUserCode] public Expect_error_Context expect_error_() {
 			return GetRuleContext<Expect_error_Context>(0);
@@ -293,48 +299,55 @@ public partial class EasyScriptParser : Parser {
 		CommandContext _localctx = new CommandContext(Context, State);
 		EnterRule(_localctx, 4, RULE_command);
 		try {
-			State = 43;
+			State = 46;
 			ErrorHandler.Sync(this);
 			switch ( Interpreter.AdaptivePredict(TokenStream,3,Context) ) {
 			case 1:
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 37;
+				State = 39;
 				echo_();
 				}
 				break;
 			case 2:
 				EnterOuterAlt(_localctx, 2);
 				{
-				State = 38;
+				State = 40;
 				quit_();
 				}
 				break;
 			case 3:
 				EnterOuterAlt(_localctx, 3);
 				{
-				State = 39;
+				State = 41;
 				expect_();
 				}
 				break;
 			case 4:
 				EnterOuterAlt(_localctx, 4);
 				{
-				State = 40;
-				expect_error_();
+				State = 42;
+				expect_different_();
 				}
 				break;
 			case 5:
 				EnterOuterAlt(_localctx, 5);
 				{
-				State = 41;
-				unknownCommand();
+				State = 43;
+				expect_error_();
 				}
 				break;
 			case 6:
 				EnterOuterAlt(_localctx, 6);
 				{
-				State = 42;
+				State = 44;
+				unknownCommand();
+				}
+				break;
+			case 7:
+				EnterOuterAlt(_localctx, 7);
+				{
+				State = 45;
 				assignment();
 				}
 				break;
@@ -391,23 +404,23 @@ public partial class EasyScriptParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 45;
+			State = 48;
 			Match(ECHO_);
-			State = 47;
+			State = 50;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
 			do {
 				{
 				{
-				State = 46;
+				State = 49;
 				Match(SPACE);
 				}
 				}
-				State = 49;
+				State = 52;
 				ErrorHandler.Sync(this);
 				_la = TokenStream.LA(1);
 			} while ( _la==SPACE );
-			State = 51;
+			State = 54;
 			data();
 			}
 		}
@@ -454,7 +467,7 @@ public partial class EasyScriptParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 53;
+			State = 56;
 			Match(QUIT_);
 			}
 		}
@@ -476,6 +489,9 @@ public partial class EasyScriptParser : Parser {
 		}
 		[System.Diagnostics.DebuggerNonUserCode] public UnknownCommandContext unknownCommand() {
 			return GetRuleContext<UnknownCommandContext>(0);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public Echo_Context echo_() {
+			return GetRuleContext<Echo_Context>(0);
 		}
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode[] SPACE() { return GetTokens(EasyScriptParser.SPACE); }
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode SPACE(int i) {
@@ -512,40 +528,165 @@ public partial class EasyScriptParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 55;
+			State = 58;
 			Match(EXPECT_);
-			State = 57;
+			State = 60;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
 			do {
 				{
 				{
-				State = 56;
-				Match(SPACE);
-				}
-				}
 				State = 59;
+				Match(SPACE);
+				}
+				}
+				State = 62;
 				ErrorHandler.Sync(this);
 				_la = TokenStream.LA(1);
 			} while ( _la==SPACE );
-			State = 61;
+			State = 64;
 			data();
-			State = 63;
+			State = 66;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
 			do {
 				{
 				{
-				State = 62;
+				State = 65;
 				Match(SPACE);
 				}
 				}
-				State = 65;
+				State = 68;
 				ErrorHandler.Sync(this);
 				_la = TokenStream.LA(1);
 			} while ( _la==SPACE );
-			State = 67;
-			unknownCommand();
+			State = 72;
+			ErrorHandler.Sync(this);
+			switch (TokenStream.LA(1)) {
+			case WORD:
+				{
+				State = 70;
+				unknownCommand();
+				}
+				break;
+			case ECHO_:
+				{
+				State = 71;
+				echo_();
+				}
+				break;
+			default:
+				throw new NoViableAltException(this);
+			}
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			ErrorHandler.ReportError(this, re);
+			ErrorHandler.Recover(this, re);
+		}
+		finally {
+			ExitRule();
+		}
+		return _localctx;
+	}
+
+	public partial class Expect_different_Context : ParserRuleContext {
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode EXPECT_DIFFERENT_() { return GetToken(EasyScriptParser.EXPECT_DIFFERENT_, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public DataContext data() {
+			return GetRuleContext<DataContext>(0);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public UnknownCommandContext unknownCommand() {
+			return GetRuleContext<UnknownCommandContext>(0);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public Echo_Context echo_() {
+			return GetRuleContext<Echo_Context>(0);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode[] SPACE() { return GetTokens(EasyScriptParser.SPACE); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode SPACE(int i) {
+			return GetToken(EasyScriptParser.SPACE, i);
+		}
+		public Expect_different_Context(ParserRuleContext parent, int invokingState)
+			: base(parent, invokingState)
+		{
+		}
+		public override int RuleIndex { get { return RULE_expect_different_; } }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			IEasyScriptListener typedListener = listener as IEasyScriptListener;
+			if (typedListener != null) typedListener.EnterExpect_different_(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			IEasyScriptListener typedListener = listener as IEasyScriptListener;
+			if (typedListener != null) typedListener.ExitExpect_different_(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IEasyScriptVisitor<TResult> typedVisitor = visitor as IEasyScriptVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitExpect_different_(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+
+	[RuleVersion(0)]
+	public Expect_different_Context expect_different_() {
+		Expect_different_Context _localctx = new Expect_different_Context(Context, State);
+		EnterRule(_localctx, 12, RULE_expect_different_);
+		int _la;
+		try {
+			EnterOuterAlt(_localctx, 1);
+			{
+			State = 74;
+			Match(EXPECT_DIFFERENT_);
+			State = 76;
+			ErrorHandler.Sync(this);
+			_la = TokenStream.LA(1);
+			do {
+				{
+				{
+				State = 75;
+				Match(SPACE);
+				}
+				}
+				State = 78;
+				ErrorHandler.Sync(this);
+				_la = TokenStream.LA(1);
+			} while ( _la==SPACE );
+			State = 80;
+			data();
+			State = 82;
+			ErrorHandler.Sync(this);
+			_la = TokenStream.LA(1);
+			do {
+				{
+				{
+				State = 81;
+				Match(SPACE);
+				}
+				}
+				State = 84;
+				ErrorHandler.Sync(this);
+				_la = TokenStream.LA(1);
+			} while ( _la==SPACE );
+			State = 88;
+			ErrorHandler.Sync(this);
+			switch (TokenStream.LA(1)) {
+			case WORD:
+				{
+				State = 86;
+				unknownCommand();
+				}
+				break;
+			case ECHO_:
+				{
+				State = 87;
+				echo_();
+				}
+				break;
+			default:
+				throw new NoViableAltException(this);
+			}
 			}
 		}
 		catch (RecognitionException re) {
@@ -597,44 +738,44 @@ public partial class EasyScriptParser : Parser {
 	[RuleVersion(0)]
 	public Expect_error_Context expect_error_() {
 		Expect_error_Context _localctx = new Expect_error_Context(Context, State);
-		EnterRule(_localctx, 12, RULE_expect_error_);
+		EnterRule(_localctx, 14, RULE_expect_error_);
 		int _la;
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 69;
+			State = 90;
 			Match(EXPECT_ERROR_);
-			State = 71;
+			State = 92;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
 			do {
 				{
 				{
-				State = 70;
+				State = 91;
 				Match(SPACE);
 				}
 				}
-				State = 73;
+				State = 94;
 				ErrorHandler.Sync(this);
 				_la = TokenStream.LA(1);
 			} while ( _la==SPACE );
-			State = 75;
+			State = 96;
 			data();
-			State = 77;
+			State = 98;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
 			do {
 				{
 				{
-				State = 76;
+				State = 97;
 				Match(SPACE);
 				}
 				}
-				State = 79;
+				State = 100;
 				ErrorHandler.Sync(this);
 				_la = TokenStream.LA(1);
 			} while ( _la==SPACE );
-			State = 81;
+			State = 102;
 			unknownCommand();
 			}
 		}
@@ -684,33 +825,33 @@ public partial class EasyScriptParser : Parser {
 	[RuleVersion(0)]
 	public UnknownCommandContext unknownCommand() {
 		UnknownCommandContext _localctx = new UnknownCommandContext(Context, State);
-		EnterRule(_localctx, 14, RULE_unknownCommand);
+		EnterRule(_localctx, 16, RULE_unknownCommand);
 		int _la;
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 83;
+			State = 104;
 			Match(WORD);
-			State = 90;
+			State = 111;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
 			if (_la==SPACE) {
 				{
-				State = 85;
+				State = 106;
 				ErrorHandler.Sync(this);
 				_la = TokenStream.LA(1);
 				do {
 					{
 					{
-					State = 84;
+					State = 105;
 					Match(SPACE);
 					}
 					}
-					State = 87;
+					State = 108;
 					ErrorHandler.Sync(this);
 					_la = TokenStream.LA(1);
 				} while ( _la==SPACE );
-				State = 89;
+				State = 110;
 				argumentList();
 				}
 			}
@@ -760,15 +901,15 @@ public partial class EasyScriptParser : Parser {
 	[RuleVersion(0)]
 	public AssignmentContext assignment() {
 		AssignmentContext _localctx = new AssignmentContext(Context, State);
-		EnterRule(_localctx, 16, RULE_assignment);
+		EnterRule(_localctx, 18, RULE_assignment);
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 92;
+			State = 113;
 			Match(WORD);
-			State = 93;
+			State = 114;
 			Match(EQUAL);
-			State = 94;
+			State = 115;
 			unknownCommand();
 			}
 		}
@@ -820,33 +961,33 @@ public partial class EasyScriptParser : Parser {
 	[RuleVersion(0)]
 	public ArgumentListContext argumentList() {
 		ArgumentListContext _localctx = new ArgumentListContext(Context, State);
-		EnterRule(_localctx, 18, RULE_argumentList);
+		EnterRule(_localctx, 20, RULE_argumentList);
 		int _la;
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 96;
+			State = 117;
 			argument();
-			State = 103;
+			State = 124;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
 			if (_la==SPACE) {
 				{
-				State = 98;
+				State = 119;
 				ErrorHandler.Sync(this);
 				_la = TokenStream.LA(1);
 				do {
 					{
 					{
-					State = 97;
+					State = 118;
 					Match(SPACE);
 					}
 					}
-					State = 100;
+					State = 121;
 					ErrorHandler.Sync(this);
 					_la = TokenStream.LA(1);
 				} while ( _la==SPACE );
-				State = 102;
+				State = 123;
 				argumentList();
 				}
 			}
@@ -896,15 +1037,15 @@ public partial class EasyScriptParser : Parser {
 	[RuleVersion(0)]
 	public ArgumentContext argument() {
 		ArgumentContext _localctx = new ArgumentContext(Context, State);
-		EnterRule(_localctx, 20, RULE_argument);
+		EnterRule(_localctx, 22, RULE_argument);
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 105;
+			State = 126;
 			Match(WORD);
-			State = 106;
+			State = 127;
 			Match(EQUAL);
-			State = 107;
+			State = 128;
 			data();
 			}
 		}
@@ -949,14 +1090,14 @@ public partial class EasyScriptParser : Parser {
 	[RuleVersion(0)]
 	public DataContext data() {
 		DataContext _localctx = new DataContext(Context, State);
-		EnterRule(_localctx, 22, RULE_data);
+		EnterRule(_localctx, 24, RULE_data);
 		int _la;
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 109;
+			State = 130;
 			_la = TokenStream.LA(1);
-			if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & 448L) != 0)) ) {
+			if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & 896L) != 0)) ) {
 			ErrorHandler.RecoverInline(this);
 			}
 			else {
@@ -977,39 +1118,47 @@ public partial class EasyScriptParser : Parser {
 	}
 
 	private static int[] _serializedATN = {
-		4,1,11,112,2,0,7,0,2,1,7,1,2,2,7,2,2,3,7,3,2,4,7,4,2,5,7,5,2,6,7,6,2,7,
-		7,7,2,8,7,8,2,9,7,9,2,10,7,10,2,11,7,11,1,0,1,0,5,0,27,8,0,10,0,12,0,30,
-		9,0,1,0,3,0,33,8,0,1,1,1,1,1,1,1,2,1,2,1,2,1,2,1,2,1,2,3,2,44,8,2,1,3,
-		1,3,4,3,48,8,3,11,3,12,3,49,1,3,1,3,1,4,1,4,1,5,1,5,4,5,58,8,5,11,5,12,
-		5,59,1,5,1,5,4,5,64,8,5,11,5,12,5,65,1,5,1,5,1,6,1,6,4,6,72,8,6,11,6,12,
-		6,73,1,6,1,6,4,6,78,8,6,11,6,12,6,79,1,6,1,6,1,7,1,7,4,7,86,8,7,11,7,12,
-		7,87,1,7,3,7,91,8,7,1,8,1,8,1,8,1,8,1,9,1,9,4,9,99,8,9,11,9,12,9,100,1,
-		9,3,9,104,8,9,1,10,1,10,1,10,1,10,1,11,1,11,1,11,0,0,12,0,2,4,6,8,10,12,
-		14,16,18,20,22,0,2,1,1,9,9,1,0,6,8,116,0,28,1,0,0,0,2,34,1,0,0,0,4,43,
-		1,0,0,0,6,45,1,0,0,0,8,53,1,0,0,0,10,55,1,0,0,0,12,69,1,0,0,0,14,83,1,
-		0,0,0,16,92,1,0,0,0,18,96,1,0,0,0,20,105,1,0,0,0,22,109,1,0,0,0,24,27,
-		3,2,1,0,25,27,5,9,0,0,26,24,1,0,0,0,26,25,1,0,0,0,27,30,1,0,0,0,28,26,
-		1,0,0,0,28,29,1,0,0,0,29,32,1,0,0,0,30,28,1,0,0,0,31,33,5,0,0,1,32,31,
-		1,0,0,0,32,33,1,0,0,0,33,1,1,0,0,0,34,35,3,4,2,0,35,36,7,0,0,0,36,3,1,
-		0,0,0,37,44,3,6,3,0,38,44,3,8,4,0,39,44,3,10,5,0,40,44,3,12,6,0,41,44,
-		3,14,7,0,42,44,3,16,8,0,43,37,1,0,0,0,43,38,1,0,0,0,43,39,1,0,0,0,43,40,
-		1,0,0,0,43,41,1,0,0,0,43,42,1,0,0,0,44,5,1,0,0,0,45,47,5,2,0,0,46,48,5,
-		10,0,0,47,46,1,0,0,0,48,49,1,0,0,0,49,47,1,0,0,0,49,50,1,0,0,0,50,51,1,
-		0,0,0,51,52,3,22,11,0,52,7,1,0,0,0,53,54,5,3,0,0,54,9,1,0,0,0,55,57,5,
-		4,0,0,56,58,5,10,0,0,57,56,1,0,0,0,58,59,1,0,0,0,59,57,1,0,0,0,59,60,1,
-		0,0,0,60,61,1,0,0,0,61,63,3,22,11,0,62,64,5,10,0,0,63,62,1,0,0,0,64,65,
-		1,0,0,0,65,63,1,0,0,0,65,66,1,0,0,0,66,67,1,0,0,0,67,68,3,14,7,0,68,11,
-		1,0,0,0,69,71,5,5,0,0,70,72,5,10,0,0,71,70,1,0,0,0,72,73,1,0,0,0,73,71,
-		1,0,0,0,73,74,1,0,0,0,74,75,1,0,0,0,75,77,3,22,11,0,76,78,5,10,0,0,77,
-		76,1,0,0,0,78,79,1,0,0,0,79,77,1,0,0,0,79,80,1,0,0,0,80,81,1,0,0,0,81,
-		82,3,14,7,0,82,13,1,0,0,0,83,90,5,6,0,0,84,86,5,10,0,0,85,84,1,0,0,0,86,
-		87,1,0,0,0,87,85,1,0,0,0,87,88,1,0,0,0,88,89,1,0,0,0,89,91,3,18,9,0,90,
-		85,1,0,0,0,90,91,1,0,0,0,91,15,1,0,0,0,92,93,5,6,0,0,93,94,5,1,0,0,94,
-		95,3,14,7,0,95,17,1,0,0,0,96,103,3,20,10,0,97,99,5,10,0,0,98,97,1,0,0,
-		0,99,100,1,0,0,0,100,98,1,0,0,0,100,101,1,0,0,0,101,102,1,0,0,0,102,104,
-		3,18,9,0,103,98,1,0,0,0,103,104,1,0,0,0,104,19,1,0,0,0,105,106,5,6,0,0,
-		106,107,5,1,0,0,107,108,3,22,11,0,108,21,1,0,0,0,109,110,7,1,0,0,110,23,
-		1,0,0,0,13,26,28,32,43,49,59,65,73,79,87,90,100,103
+		4,1,12,133,2,0,7,0,2,1,7,1,2,2,7,2,2,3,7,3,2,4,7,4,2,5,7,5,2,6,7,6,2,7,
+		7,7,2,8,7,8,2,9,7,9,2,10,7,10,2,11,7,11,2,12,7,12,1,0,1,0,5,0,29,8,0,10,
+		0,12,0,32,9,0,1,0,3,0,35,8,0,1,1,1,1,1,1,1,2,1,2,1,2,1,2,1,2,1,2,1,2,3,
+		2,47,8,2,1,3,1,3,4,3,51,8,3,11,3,12,3,52,1,3,1,3,1,4,1,4,1,5,1,5,4,5,61,
+		8,5,11,5,12,5,62,1,5,1,5,4,5,67,8,5,11,5,12,5,68,1,5,1,5,3,5,73,8,5,1,
+		6,1,6,4,6,77,8,6,11,6,12,6,78,1,6,1,6,4,6,83,8,6,11,6,12,6,84,1,6,1,6,
+		3,6,89,8,6,1,7,1,7,4,7,93,8,7,11,7,12,7,94,1,7,1,7,4,7,99,8,7,11,7,12,
+		7,100,1,7,1,7,1,8,1,8,4,8,107,8,8,11,8,12,8,108,1,8,3,8,112,8,8,1,9,1,
+		9,1,9,1,9,1,10,1,10,4,10,120,8,10,11,10,12,10,121,1,10,3,10,125,8,10,1,
+		11,1,11,1,11,1,11,1,12,1,12,1,12,0,0,13,0,2,4,6,8,10,12,14,16,18,20,22,
+		24,0,2,1,1,10,10,1,0,7,9,141,0,30,1,0,0,0,2,36,1,0,0,0,4,46,1,0,0,0,6,
+		48,1,0,0,0,8,56,1,0,0,0,10,58,1,0,0,0,12,74,1,0,0,0,14,90,1,0,0,0,16,104,
+		1,0,0,0,18,113,1,0,0,0,20,117,1,0,0,0,22,126,1,0,0,0,24,130,1,0,0,0,26,
+		29,3,2,1,0,27,29,5,10,0,0,28,26,1,0,0,0,28,27,1,0,0,0,29,32,1,0,0,0,30,
+		28,1,0,0,0,30,31,1,0,0,0,31,34,1,0,0,0,32,30,1,0,0,0,33,35,5,0,0,1,34,
+		33,1,0,0,0,34,35,1,0,0,0,35,1,1,0,0,0,36,37,3,4,2,0,37,38,7,0,0,0,38,3,
+		1,0,0,0,39,47,3,6,3,0,40,47,3,8,4,0,41,47,3,10,5,0,42,47,3,12,6,0,43,47,
+		3,14,7,0,44,47,3,16,8,0,45,47,3,18,9,0,46,39,1,0,0,0,46,40,1,0,0,0,46,
+		41,1,0,0,0,46,42,1,0,0,0,46,43,1,0,0,0,46,44,1,0,0,0,46,45,1,0,0,0,47,
+		5,1,0,0,0,48,50,5,2,0,0,49,51,5,11,0,0,50,49,1,0,0,0,51,52,1,0,0,0,52,
+		50,1,0,0,0,52,53,1,0,0,0,53,54,1,0,0,0,54,55,3,24,12,0,55,7,1,0,0,0,56,
+		57,5,3,0,0,57,9,1,0,0,0,58,60,5,4,0,0,59,61,5,11,0,0,60,59,1,0,0,0,61,
+		62,1,0,0,0,62,60,1,0,0,0,62,63,1,0,0,0,63,64,1,0,0,0,64,66,3,24,12,0,65,
+		67,5,11,0,0,66,65,1,0,0,0,67,68,1,0,0,0,68,66,1,0,0,0,68,69,1,0,0,0,69,
+		72,1,0,0,0,70,73,3,16,8,0,71,73,3,6,3,0,72,70,1,0,0,0,72,71,1,0,0,0,73,
+		11,1,0,0,0,74,76,5,5,0,0,75,77,5,11,0,0,76,75,1,0,0,0,77,78,1,0,0,0,78,
+		76,1,0,0,0,78,79,1,0,0,0,79,80,1,0,0,0,80,82,3,24,12,0,81,83,5,11,0,0,
+		82,81,1,0,0,0,83,84,1,0,0,0,84,82,1,0,0,0,84,85,1,0,0,0,85,88,1,0,0,0,
+		86,89,3,16,8,0,87,89,3,6,3,0,88,86,1,0,0,0,88,87,1,0,0,0,89,13,1,0,0,0,
+		90,92,5,6,0,0,91,93,5,11,0,0,92,91,1,0,0,0,93,94,1,0,0,0,94,92,1,0,0,0,
+		94,95,1,0,0,0,95,96,1,0,0,0,96,98,3,24,12,0,97,99,5,11,0,0,98,97,1,0,0,
+		0,99,100,1,0,0,0,100,98,1,0,0,0,100,101,1,0,0,0,101,102,1,0,0,0,102,103,
+		3,16,8,0,103,15,1,0,0,0,104,111,5,7,0,0,105,107,5,11,0,0,106,105,1,0,0,
+		0,107,108,1,0,0,0,108,106,1,0,0,0,108,109,1,0,0,0,109,110,1,0,0,0,110,
+		112,3,20,10,0,111,106,1,0,0,0,111,112,1,0,0,0,112,17,1,0,0,0,113,114,5,
+		7,0,0,114,115,5,1,0,0,115,116,3,16,8,0,116,19,1,0,0,0,117,124,3,22,11,
+		0,118,120,5,11,0,0,119,118,1,0,0,0,120,121,1,0,0,0,121,119,1,0,0,0,121,
+		122,1,0,0,0,122,123,1,0,0,0,123,125,3,20,10,0,124,119,1,0,0,0,124,125,
+		1,0,0,0,125,21,1,0,0,0,126,127,5,7,0,0,127,128,5,1,0,0,128,129,3,24,12,
+		0,129,23,1,0,0,0,130,131,7,1,0,0,131,25,1,0,0,0,17,28,30,34,46,52,62,68,
+		72,78,84,88,94,100,108,111,121,124
 	};
 
 	public static readonly ATN _ATN =

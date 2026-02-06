@@ -1,0 +1,4 @@
+# Check if the facade is controlling states
+key1=nextNumber
+key2=nextNumber
+expectDifferent ${key1} echo ${key2}
